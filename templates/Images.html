@@ -1,0 +1,216 @@
+{% extends 'base.html' %}
+{% block title %}Images{% endblock %}
+{% block body%}
+    {% csrf_token %}
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $("#Pull").click(function(){
+                if(($("#PullName").val()||$("#Pull_IP").val())==""){
+                    $("#PullName").popover(
+                        {
+                            content:"請輸入Image名稱",
+                            placement:'auto'
+                        }
+                        );
+                    $('#PullName').popover('show');
+                    $("#Pull_IP").popover(
+                        {
+                            content:"請輸入Host IP",
+                            placement:'auto'
+                        }
+                        );
+                    $('#Pull_IP').popover('show');
+                }else{
+                    $('#sendImage').submit();
+                }
+            });
+            $('#PullName').keyup(function () {
+                $("#PullName").popover(
+                    {
+                        content:"請輸入Image名稱",
+                        placement:'auto'
+                    }
+                );
+                $("#Pull_IP").popover(
+                    {
+                        content:"請輸入Host IP",
+                        placement:'auto'
+                    }
+                );
+
+                if($("#PullName").val()&&$("#Pull_IP").val()!=""){
+                    $('#PullName').popover('hide');
+                    $('#Pull_IP').popover('hide');
+                }else {
+                    $('#PullName').popover('show');
+                    $('#Pull_IP').popover('hide');
+                }
+            })
+        });
+    $(document).ready(function() {
+            $("#save").click(function(){
+                if($("#Name").val()==""){
+                    $("#Name").popover(
+                        {
+                            content:"請輸入要查詢的Image",
+                            placement:'auto'
+                        }
+                        );
+                    $('#Name').popover('show');
+                }else{
+                    $('#sendSearch').submit();
+                }
+            });
+            $('#Name').keyup(function () {
+                $("#Name").popover(
+                    {
+                        content:"請輸入要查詢的Image",
+                        placement:'auto'
+                    }
+                );
+                if($("#Name").val()!=""){
+                    $('#Name').popover('hide');
+                }else {
+                    $('#Name').popover('show');
+                }
+            })
+        });
+
+    </script>
+    <main class="col-sm-9 ml-sm-auto col-md-10 pt-3" role="main">
+        <h1>Images</h1>
+        <form id="sendImage" action="/Images_pull/" method="post" onclick="return false">
+            <div id="ImageModalLive" class="modal fade" tabindex="-1"  aria-labelledby="ImageModalLiveLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="ImageModalLiveLabel">下載Image</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="col-sm-9">
+                                    <label for="recipient-name" class="col-form-label">Image Name</label>
+                            <input id="PullName" class="form-control" type="text" placeholder="ubuntu:16.04" data-toggle="popover" name="PullName" >
+                            </div><br/>
+                            <div class="col-sm-9">
+                                <label for="recipient-name" class="col-form-label">Host</label>
+                                <select  class="form-control"  id="select-host" name="Pull_IP" >
+                                 {% for r in Ip_get %}
+                                     <option data-toggle="popover" data-content="{{ r.Ip }}">{{ r.Ip }}</option>
+                                 {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <input id="Pull" type="submit" class="btn btn-primary"  value="Pull">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <form id="sendSearch" action="/Images_search/" method="post" onclick="return false">
+            <div id="exampleModalLive" class="modal fade" tabindex="-1"  aria-labelledby="exampleModalLiveLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLiveLabel">Search Image</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <label for="recipient-name" class="col-form-label">Search Image</label>
+                            <input id="Name" class="form-control" type="text" placeholder="apache" data-toggle="popover" name="Name" >
+                        </div>
+                        <div class="col-sm-9">
+                            <label for="recipient-name" class="col-form-label">Host</label>
+                            <select class="form-control"  id="select-host" name="Search_IP" >
+                             {% for r in Ip_get %}
+                                 <option data-toggle="popover" data-content="{{ r.Ip }}">{{ r.Ip }}</option>
+                             {% endfor %}
+                            </select>
+                        </div><br/>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <input id="save" type="submit" class="btn btn-primary"  value="Search">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <div class="pull-left">
+            <div class="btn-group" role="group" aria-label="...">
+                <button type="button" class="btn btn-primary btn-success" data-toggle="modal" data-target="#ImageModalLive">
+                    <span class="oi oi-cloud-download"></span>
+                    Pull
+                </button>
+                <button id="Remove" name="Remove" type="button" class="btn btn-primary btn-danger" data-toggle="modal" data-target="#deleteModalLive">
+                    <span class="oi oi-trash"></span>
+                    Remove
+                </button>
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalLive">
+                    <span class="oi oi-magnifying-glass"></span>
+                    Search
+                </button>
+            </div>
+        </div><br/>
+        <style type="text/css">
+            td {
+                white-space:nowrap;
+                overflow:hidden;
+                text-overflow: ellipsis;
+            }
+        </style>
+        <table class="table table table-hover " style="table-layout:fixed">
+            <thead>
+                <tr>
+                  <th><input type="checkbox" aria-label="Checkbox for following text input"></th>
+                  <th>REPOSITORY</th>
+                  <th>Tag</th>
+                  <th>IMAGE ID</th>
+                  <th>CREATED</th>
+                  <th>SIZE</th>
+                  <th>Host</th>
+                </tr>
+            </thead>
+            <tbody>
+            <tbody>
+            {% for r in Info %}
+                <tr>
+                    {% if r.count == '0' %}
+                        <td><input type="checkbox" aria-label="Checkbox for following text input" name="id" value="{{ r.Ip }}:2375/images/{{ r.ImageId }}"> <span class="badge badge-pill badge-secondary">Unused</span> </td>
+                    {% else %}
+                        <td><input type="checkbox" aria-label="Checkbox for following text input" name="id" value="{{ r.Ip }}:2375/images/{{ r.ImageId }}"></td>
+                    {% endif %}
+
+                    <td data-toggle="popover" data-content="{{ r.Repository }}">{{ r.Repository }}</td>
+                    <td data-toggle="popover" data-content="{{ r.Tag }}">{{ r.Tag }}</td>
+                    <td data-toggle="popover" data-content="{{ r.ImageId }}">{{ r.ImageId }}</td>
+                    <td data-toggle="popover" data-content="{{ r.Created }}">{{ r.Created }}</td>
+                    <td data-toggle="popover" data-content="{{ r.Size }}">{{ r.Size }} MB</td>
+                    <td data-toggle="popover" data-content="{{ r.Ip }}">{{ r.Ip }}</td>
+                 </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </main>
+    <script>
+         $("#Remove").click(function () {
+            $("input[name='id']:checkbox:checked").each(function () {
+                var T = 'http://'+$(this).val();
+                {% csrf_token %}
+                $.ajax({
+                    url: '/Images_remove/'+T,
+                    method :"POST",
+                    success:function () {
+                      window.location.reload();
+                    }
+                });
+            });
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard{% endblock %}
+{% block body%}
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $("#save").click(function(){
+                if($("#IP").val()==""){
+                    $("#IP").popover(
+                        {
+                            content:"請輸入IP位置",
+                            placement:'auto'
+                        }
+                        );
+                    $('#IP').popover('show');
+                }else {
+                    {% csrf_token %}
+                    $.ajax({
+                        url: '/new_ip/',
+                        method :"POST",
+                        data: {
+                            IP : $("#IP").val(),
+                            tag : $('#tag').val()
+                        },
+                        dataType: 'json',
+                        success:function () {
+                            window.location.reload();
+                        },
+                        error:function () {
+                            window.location.reload();
+                        }
+                    });
+                }
+            });
+            $('#IP').keyup(function () {
+                $("#IP").popover(
+                    {
+                        content:"請輸入IP位置",
+                        placement:'auto'
+                    }
+                );
+                if($("#IP").val()!=""){
+                    $('#IP').popover('hide');
+                }else {
+                    $('#IP').popover('show');
+                }
+            });
+        });
+    </script>
+    <main class="col-sm-9 ml-sm-auto col-md-10 pt-3" role="main">
+        <h1>Dashboard</h1>
+        <form id="sendIp" action="" method="POST" onclick="return false">
+            <div id="exampleModalLive" class="modal fade" tabindex="-1"  aria-labelledby="exampleModalLiveLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLiveLabel">請輸入Host IP</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <form>
+                            <div class="col-9">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <label for="recipient-name" class="col-form-label">IP *(必填)</label>
+                                        <input id="IP" class="form-control" type="text" placeholder="Ex: 127.0.0.1" data-toggle="popover" name="IP" >
+                                    </div>
+                                    <div class="col-6">
+                                        <label for="recipient-name" class="col-form-label">描述</label>
+                                        <input type="text" class="form-control" id="tag" name="tag">
+                                    </div>
+                                </div>
+                            </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button id="save" type="submit" class="btn btn-primary">
+                                Save
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <button type="button" class="btn btn-primary btn-outline-success" data-toggle="modal" data-target="#exampleModalLive">
+            <span class="oi oi-plus"></span>Add HOST
+        </button>
+        <br></br>
+        <table class="table table table-hover">
+        <thead>
+        <tr class="table-active">
+            <th>#</th>
+            <th class="col-">主機名稱</th>
+            <th class="col-">主機IP</th>
+            <th class="col-">描述</th>
+        </tr>
+        </thead>
+            <tbody>
+            {% for r in Info %}
+                <tr>
+                    <td><a href="/Host/?Ip={{ r.Ip }}"> 進入 </a></td>
+                    <td>{{ r.Name }}</td>
+                    <td>{{ r.Ip }}</td>
+                    <td>{{ r.Tag }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </main>
+{% endblock %}
+

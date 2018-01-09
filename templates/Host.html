@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Host{% endblock %}
+{% block body%}
+    <script src="http://cdn.hcharts.cn/highcharts/highcharts.js"></script>
+    <script>
+        $(function () {
+            $('#container').highcharts({
+                chart: {
+                    plotBackgroundColor: null,
+                    plotBorderWidth: 0,
+                    plotShadow: false
+                },
+                title: {
+                    text: null
+                },
+                credits:{
+                    enabled: false
+                },
+                plotOptions: {
+                    pie: {
+                        allowPointSelect: true,
+                        cursor: 'pointer',
+                        dataLabels: {
+                            enabled: false
+                        },
+                        showInLegend: true
+                    }
+                },
+                legend: {
+                    layout: 'vertical',
+                    align: 'right',
+                    verticalAlign: 'middle'
+                },
+                series: [{
+                    type: 'pie',
+                    name: '數量',
+                    data: [
+                        ['Running', {{ INFO.0.ContainersRunning }}],
+                        ['Paused', {{ INFO.0.ContainersPaused }}],
+                        ['Stopped', {{ INFO.0.ContainersStopped }}]
+                    ]
+                }]
+            });
+        });
+    </script>
+    <main class="col-sm-9 ml-sm-auto col-md-10 pt-3" role="main">
+        <h1>{{ INFO.0.Ip }}</h1>
+        <div class="card">
+            <div class="card-header">
+                <i class="oi oi-hard-drive" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;&nbsp;Host status
+            </div>
+            <div class="card-body" style="padding: 0;">
+                    <table class="table">
+                        <tr>
+                            <td class="col-"><strong>IP</strong> </td>
+                            <td class="col-auto">{{ INFO.0.Ip }}</td>
+                        </tr>
+                        <tr>
+                            <td class="col-"><strong>Name</strong> </td>
+                            <td class="col-auto">{{ INFO.0.Name }}</td>
+                        </tr>
+                        <tr>
+                            <td class="col-"><strong>OS</strong> </td>
+                            <td class="col-auto">{{ INFO.0.OperatingSystem }}</td>
+                        </tr>
+                        <tr>
+                            <td class="col-"><strong>CPU Architecture</strong> </td>
+                            <td class="col-auto">{{ INFO.0.Architecture }}</td>
+                        </tr>
+                        <tr>
+                            <td class="col-"><strong>CPU</strong> </td>
+                            <td class="col-auto">{{ INFO.0.NCPU }}</td>
+                        </tr>
+                        <tr>
+                            <td class="col-"><strong>Service Version</strong> </td>
+                            <td class="col-auto">{{ INFO.0.ServerVersion }}</td>
+                        </tr>
+                    </table>
+            </div>
+        </div><br/>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="media">
+                            <img class="mr-3 " src="{% static 'assets/PNG/Image.png' %}"/>
+                            <div class="media-body">
+                                <h2 class="card-title col-sm">{{ INFO.0.Images }}</h2>
+                                <a href="/Images/"><h2 class="card-title col-sm">Image</h2></a>
+                                <p >&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <i class="oi oi-pie-chart" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;&nbsp;
+                                    {{ INFO.0.Images_Size }} MB
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-" id="container" style="min-width:250px;height:134px"></div>
+                            <div class="media">
+                            <div class="media-body">
+                                <h2 class="card-title col-sm">{{ INFO.0.Containers }}</h2>
+                                <br>
+                                <a href="/Containers/"><h2 class="card-title col-sm">Containers</h2></a>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+{% endblock %}

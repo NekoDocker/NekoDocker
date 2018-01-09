@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block title %}Search{% endblock %}
+{% block body%}
+    <main class="col-sm-9 ml-sm-auto col-md-10 pt-3" role="main">
+        <h1>Search</h1>
+        <div>
+            <a class="btn btn-primary btn-outline-success" href="/Images/"><span class="oi oi-arrow-thick-left"></span>  上一頁</a>
+        </div><br/>
+        <table class="table table table-hover">
+        <thead>
+        <tr class="table-active">
+            <th class="col-">Name</th>
+            <th class="col-">Description</th>
+            <th class="col-">Stars</th>
+        </tr>
+        </thead>
+            <tbody>
+            {% for r in INFO %}
+                <tr>
+                    <td>{{ r.SearchName }}</td>
+                    <td>{{ r.Description }}</td>
+                    <td>{{ r.Stars }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </main>
+
+
+
+{% endblock %}

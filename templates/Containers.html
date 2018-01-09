@@ -1,0 +1,343 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Containers{% endblock %}
+{% block body%}
+    {% csrf_token %}
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <style type="text/css">
+    .material-switch > input[type="checkbox"] {
+      display: none;
+    }
+    .material-switch > label {
+        cursor: pointer;
+        height: 0px;
+        position: relative;
+        top: 2px;
+        width: 40px;
+    }
+    .material-switch > label::before {
+      background: rgb(0, 0, 0);
+      box-shadow: inset 0px 0px 10px rgba(0, 0, 0, 0.5);
+      border-radius: 8px;
+      content: '';
+      height: 16px;
+      margin-top: -8px;
+      position: absolute;
+      opacity: 0.3;
+      transition: all 0.4s ease-in-out;
+      width: 40px;
+    }
+    .material-switch > label::after {
+      background: rgb(255, 255, 255);
+      border-radius: 16px;
+      box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3);
+      content: '';
+      height: 24px;
+      left: -4px;
+      margin-top: -8px;
+      position: absolute;
+      top: -4px;
+      transition: all 0.3s ease-in-out;
+      width: 24px;
+    }
+    .material-switch > input[type="checkbox"]:checked + label::before {
+      background: inherit;
+      opacity: 0.5;
+    }
+    .material-switch > input[type="checkbox"]:checked + label::after {
+      background: inherit;
+      left: 20px;
+    }
+    .default-color{background-color:#2BBBAD!important}
+    .default-color-dark{background-color:#00695c!important}
+    .primary-color{background-color:#4285F4!important}
+    .primary-color-dark{background-color:#0d47a1!important}
+    .secondary-color{background-color:#a6c!important}
+    .secondary-color-dark{background-color:#93C!important}
+    .elegant-color{background-color:#2E2E2E!important}
+    .elegant-color-dark{background-color:#212121!important}
+    .stylish-color{background-color:#4B515D!important}
+    .stylish-color-dark{background-color:#3E4551!important}
+    .special-color{background-color:#37474F!important}
+    .special-color-dark{background-color:#263238!important}
+    .unique-color{background-color:#3F729B!important}
+    .unique-color-dark{background-color:#1C2331!important}
+    .mdb-color{background-color:#45526E!important}
+    </style>
+    <script>
+        $(function () {
+          $('[data-toggle="popover"]').popover(
+              {
+                  placement :'auto',
+                  trigger : 'hover'
+              }
+          )
+        });
+    </script>
+    <main class="col-sm-9 ml-sm-auto col-md-10 pt-3" role="main">
+        <h1>Containers</h1>
+        <div class="pull-left">
+            <div class="btn-group" role="group" aria-label="...">
+                <button name="Start" id="Start" type="button" class="btn btn-primary btn-success" >
+                    <span class="oi oi-media-play"></span>
+                    Start
+                </button>
+                <button name="Stop" id="Stop" type="button" class="btn btn-primary btn-danger">
+                    <span class="oi oi-media-stop"></span>
+                    Stop
+                </button>
+                <button name="Restart" id="Restart" type="button" class="btn btn-primary ">
+                    <span class="oi oi-reload"></span>
+                    Restart
+                </button>
+                <button name="Pause" id="Pause" type="button" class="btn btn-primary btn-info">
+                    <span class="oi oi-media-pause"></span>
+                    Pause
+                </button>
+                <button name="Unpause" id="Unpause" type="button" class="btn btn-primary btn-warning">
+                    <span class="oi oi-loop-circular"></span>
+                    Unpause
+                </button>
+                <button name="Remove" id="Remove" type="button" class="btn btn-primary btn-danger">
+                    <span class="oi oi-trash"></span>
+                    Remove
+                </button>
+            </div>
+            <a class="btn btn-primary btn-outline-success" name="Create" id="Create" href="/Containers_create/" role="button">
+                <span class="oi oi-plus"></span>
+                Add Containers
+            </a>
+        </div>
+        <br><br/>
+        <style type="text/css">
+            td {
+                white-space:nowrap;
+                overflow:hidden;
+                text-overflow: ellipsis;
+            }
+        </style>
+        <table class="table table-hover " style="table-layout:fixed">
+            <thead>
+                <tr>
+                    <th><input type="checkbox" aria-label="Checkbox for following text input" name="clickAll" id="clickAll"></th>
+                    <th>狀態</th>
+                    <th>Name</th>
+                    <th>Image</th>
+                    <th>Port</th>
+                    <th>Command</th>
+                    <th>Host</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for r in info %}
+                <tr>
+                    <td><input type="checkbox" aria-label="Checkbox for following text input" name="id" value="{{ r.Ip }}:2375/containers/{{ r.Cid }}" ></td>
+                    {% if r.State == "running"%}
+                        <td> <span class="badge badge-pill badge-success">running</span> </td>
+                    {% elif r.State == "exited"%}
+                        <td> <span class="badge badge-pill badge-danger">stopped</span> </td>
+                    {% elif r.State == "paused"%}
+                        <td> <span class="badge badge-pill badge-primary">paused</span> </td>
+                    {% elif r.State == "created"%}
+                        <td> <span class="badge badge-pill badge-secondary">created</span> </td>
+                    {% endif %}
+                    <td data-toggle="popover" data-content="{{ r.Cid }}"><a href="/Containers_search/?Cid={{ r.Cid }}"> {{ r.Name }}</a></td>
+                    <td>{{ r.Image }}</td>
+                    <td>{{ r.PrivatePort }} : {{ r.PublicPort }}</td>
+                    <td data-toggle="popover" data-content="{{ r.Command }}">{{ r.Command }}</td>
+                    <td>{{ r.Ip }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </main>
+    {% csrf_token %}
+    <script>
+        $("#clickAll").click(function () {
+            if($("#clickAll").prop("checked")){
+                $("input[name='id']").each(function () {
+                    $(this).prop("checked",true);
+                });
+            } else {
+                $("input[name='id']").each(function () {
+                    $(this).prop("checked", false);
+                });
+            }
+        });
+        $("#Start").click(function () {
+            $("input[name='id']:checkbox:checked").each(function () {
+                $.ajax({
+                    async: false,
+                    type: 'POST',
+                    url: 'http://'+$(this).val()+"/start",
+                    data: {
+                    },
+                    dataType: 'json',
+                    success:function () {
+                      window.location.href = "/Containers/";
+                    },
+                    error : function () {
+                        window.location.href = "/Containers/";
+                    },
+                    statusCode:{
+                        204:function () {
+                            alert("啟動成功！");
+                        },
+                        304:function () {
+                            alert("container already started ! ");
+                        },
+                        404:function () {
+                            alert("找不到container");
+                        },
+                        500:function () {
+                            alert("server error ! ")
+                        }
+                    }
+                });
+            });
+        });
+        $("#Stop").click(function () {
+            $("input[name='id']:checkbox:checked").each(function () {
+                $.ajax({
+                    async: false,
+                    type: 'POST',
+                    url: 'http://'+$(this).val()+"/stop",
+                    data: {
+                    },
+                    dataType: 'json',
+                    success:function () {
+                      window.location.reload();
+                    },
+                    error : function () {
+                        window.location.reload();
+                    },
+                    statusCode:{
+                        204:function () {
+                            alert("啟動成功！");
+                        },
+                        304:function () {
+                            alert("container already started ! ");
+                        },
+                        404:function () {
+                            alert("找不到container");
+                        },
+                        500:function () {
+                            alert("server error ! ")
+                        }
+                    }
+                });
+            });
+        });
+        $("#Pause").click(function () {
+            $("input[name='id']:checkbox:checked").each(function () {
+                $.ajax({
+                    async: false,
+                    type: 'POST',
+                    url: 'http://'+$(this).val()+"/pause",
+                    data: {
+                    },
+                    dataType: 'json',
+                    success:function () {
+                      window.location.reload();
+                    },
+                    error : function () {
+                        window.location.reload();
+                    },
+                    statusCode:{
+                        204:function () {
+                            alert("啟動成功！");
+                        },
+                        304:function () {
+                            alert("container already started ! ");
+                        },
+                        404:function () {
+                            alert("找不到container");
+                        },
+                        500:function () {
+                            alert("server error ! ")
+                        }
+                    }
+                });
+            });
+        });
+        $("#Unpause").click(function () {
+            $("input[name='id']:checkbox:checked").each(function () {
+                $.ajax({
+                    async: false,
+                    type: 'POST',
+                    url: 'http://'+$(this).val()+"/unpause",
+                    data: {
+                    },
+                    dataType: 'json',
+                    success:function () {
+                      window.location.reload();
+                    },
+                    error : function () {
+                        window.location.reload();
+                    },
+                    statusCode:{
+                        204:function () {
+                            alert("啟動成功！");
+                        },
+                        304:function () {
+                            alert("container already started ! ");
+                        },
+                        404:function () {
+                            alert("找不到container");
+                        },
+                        500:function () {
+                            alert("server error ! ")
+                        }
+                    }
+                });
+            });
+        });
+        $("#Restart").click(function () {
+            $("input[name='id']:checkbox:checked").each(function () {
+                $.ajax({
+                    async: false,
+                    type: 'POST',
+                    url: 'http://'+$(this).val()+"/restart",
+                    data: {
+                        Id : '$(this).val()'
+
+                    },
+                    dataType: 'json',
+                    success:function () {
+                      window.location.reload();
+                    },
+                    error : function () {
+                        window.location.reload();
+                    },
+                    statusCode:{
+                        204:function () {
+                            alert("啟動成功！");
+                        },
+                        304:function () {
+                            alert("container already started ! ");
+                        },
+                        404:function () {
+                            alert("找不到container");
+                        },
+                        500:function () {
+                            alert("server error ! ")
+                        }
+                    }
+                });
+            });
+        });
+        $("#Remove").click(function () {
+            $("input[name='id']:checkbox:checked").each(function () {
+                var T = 'http://'+$(this).val();
+                {% csrf_token %}
+                $.ajax({
+                    url: '/Containers_del/'+T+'/',
+                    method :"POST",
+                    success:function () {
+                      window.location.reload();
+                    }
+                });
+            });
+        });
+    </script>
+{% endblock %}

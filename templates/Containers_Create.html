@@ -1,0 +1,307 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Containers - Create{% endblock %}
+{% block body%}
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style type="text/css">
+    .material-switch > input[type="checkbox"] {
+      display: none;
+    }
+    .material-switch > label {
+        cursor: pointer;
+        height: 0px;
+        position: relative;
+        top: 2px;
+        width: 40px;
+    }
+    .material-switch > label::before {
+      background: rgb(0, 0, 0);
+      box-shadow: inset 0px 0px 10px rgba(0, 0, 0, 0.5);
+      border-radius: 8px;
+      content: '';
+      height: 16px;
+      margin-top: -8px;
+      position: absolute;
+      opacity: 0.3;
+      transition: all 0.4s ease-in-out;
+      width: 40px;
+    }
+    .material-switch > label::after {
+      background: rgb(255, 255, 255);
+      border-radius: 16px;
+      box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3);
+      content: '';
+      height: 24px;
+      left: -4px;
+      margin-top: -8px;
+      position: absolute;
+      top: -4px;
+      transition: all 0.3s ease-in-out;
+      width: 24px;
+    }
+    .material-switch > input[type="checkbox"]:checked + label::before {
+      background: inherit;
+      opacity: 0.5;
+    }
+    .material-switch > input[type="checkbox"]:checked + label::after {
+      background: inherit;
+      left: 20px;
+    }
+     .strike {
+        display: block;
+        text-align: center;
+        overflow: hidden;
+        white-space: nowrap;
+        color: #808080;
+    }
+    .strike > span {
+        position: relative;
+        display: inline-block;
+    }
+    .strike > span:before,
+    .strike > span:after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        width: 9999px;
+        height: 1px;
+        background: #808080;
+    }
+    .strike > span:before {
+        right: 100%;
+        margin-right: 15px;
+    }
+    .strike > span:after {
+        left: 100%;
+        margin-left: 15px;
+    }
+    .default-color{background-color:#2BBBAD!important}
+    .default-color-dark{background-color:#00695c!important}
+    .primary-color{background-color:#4285F4!important}
+    .primary-color-dark{background-color:#0d47a1!important}
+    .secondary-color{background-color:#a6c!important}
+    .secondary-color-dark{background-color:#93C!important}
+    .elegant-color{background-color:#2E2E2E!important}
+    .elegant-color-dark{background-color:#212121!important}
+    .stylish-color{background-color:#4B515D!important}
+    .stylish-color-dark{background-color:#3E4551!important}
+    .special-color{background-color:#37474F!important}
+    .special-color-dark{background-color:#263238!important}
+    .unique-color{background-color:#3F729B!important}
+    .unique-color-dark{background-color:#1C2331!important}
+    .mdb-color{background-color:#45526E!important}
+    </style>
+    <main class="col-sm-9 ml-sm-auto col-md-10 pt-3" role="main">
+        <div class="page-header">
+            <div class="row-fluid">
+                <h2>Create Containers</h2>
+            </div>
+        </div>
+        <div class="alert alert-success" role="alert" id="success">
+              success
+        </div>
+        <div class="alert alert-danger" role="alert" id="error-404alert">
+                <strong>ERROR</strong> : not such image
+        </div>
+        <div class="alert alert-danger" role="alert" id="error-500alert">
+                <strong>ERROR</strong> : Something went wrong
+        </div>
+        <div class="card">
+            <div class="card-body" >
+                <form>
+                    <div class="col-">
+                        <div class="row">
+                            <div class="col-1">
+                                <label for="recipient-name" class="col-form-label">Name</label>
+                            </div>
+                            <div class="col-sm">
+                                <input type="text" class="form-control" placeholder="e.g. myContainer" id="Name" name="Name">
+                            </div>
+                            <div class="col-1">
+                                <label for="recipient-name" class="col-form-label">Host</label>
+                            </div>
+                            <div class="col-sm form-group">
+                                <select class="form-control"  id="select-host">
+                                    {% for r in Ip_get %}
+                                        <option data-toggle="popover" data-content="{{ r.Ip }}">{{ r.Ip }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div><br/>
+                    <div class="col-">
+                        <div class="strike">
+                            <span>Image configuration</span>
+                        </div>
+                    </div><br/>
+                    <div class="col-">
+                        <div class="row">
+                            <div class="col-2">
+                                <label for="recipient-name" class="col-form-label">Image Name</label>
+                            </div>
+                            <div class="col-sm">
+                                <input type="text" class="form-control" placeholder="e.g. myImage:myTag" id="Image_Name" name="Image_Name">
+                            </div>
+                        </div>
+                    </div><br/>
+                    <div class="col-">
+                        <div class="strike">
+                            <span>Port configuration</span>
+                        </div>
+                    </div><br/>
+                    <div class="col-">
+                        <div class="row">
+                            <div class="col-3">
+                                <label for="recipient-name" class="col-form-label">Publish all exposed ports</label>
+                            </div>
+                            <div class="material-switch">
+                                <input id="switch" name="switch" type="checkbox" >
+                                <label for="switch" class="default-color"></label>
+                            </div>
+                        </div><br/>
+                        <div class="row">
+                            <div class="col-3">
+                                <label for="recipient-name" class="col-form-label">Port Mapping</label>
+                            </div>
+                            <button type="button" class="btn btn-primary btn-sm" id="add_portMap">
+                                 <span class="oi oi-plus"></span>&nbsp; map additional port
+                            </button>
+                        </div><br/>
+                        <div id="port_map"></div>
+                    </div>
+                    <div class="col-">
+                        <div class="strike">
+                            <span>Actions</span>
+                        </div>
+                    </div>
+                    <div class="col-">
+                        <div class="row">
+                            <div class="col-6">
+                                <button type="button" class="btn btn-primary click" id="start_containers" data-loading-text="Loading...">
+                                    Start container
+                                </button>
+                                <a id="cancel" type="button" class="btn btn-light" ui-sref="containers" href="/Containers/">Cancel</a>
+                            </div>
+                        </div>
+                    </div><br/>
+                </form>
+            </div>
+        </div><br/>
+    </main>
+    <script>
+        var txtId = 1;
+        $("#add_portMap").click(function () {
+            $("#port_map").append('<div class="row" id="div'+ txtId +'"><div class="input-group col-4"><span class="input-group-addon" id="basic-addon1">host</span><input type="text" class="form-control" placeholder="e.g. 80 " id="host-port'+ txtId +'" name="host-port"></div><div class="col-"><span class="oi oi-arrow-right"></span></div><div class="input-group col-4"><span class="input-group-addon" id="basic-addon1">container</span><input type="text" class="form-control" placeholder="e.g. 80 " id="containers-port'+ txtId +'" name="containers-port"></div><div><input type="radio" name="tcpudp'+ txtId +'" id="tcpudp'+ txtId +'" value="tcp" checked> TCP</label><input type="radio" name="tcpudp'+ txtId +'" id="tcpudp'+ txtId +'" value="udp"> UDP</label></div>&nbsp;<button type="button" class="btn btn-danger btn-sm" id="add_portMap" onclick="deltxt('+ txtId +')"><span class="oi oi-trash"></span></button></div>');
+            txtId++;
+        });
+        function deltxt(id) {
+            $("#div"+id).remove();
+        }
+        $(document).ready(function () {
+            $("#success").hide();
+            $("#error-404alert").hide();
+            $("#error-500alert").hide();
+        });
+        $("#start_containers").click(function () {
+            $(this).attr('disabled',true);
+            {% csrf_token %}
+            var PublishAllPorts = 'false';
+            var HostPort = new Array(txtId);
+            var ContainersPort = new Array(txtId);
+            var TcpUdp = new Array(txtId);
+            var tcpudpid;
+            if(document.getElementsByName("switch").checked)
+                PublishAllPorts = 'true';
+            var data = {
+                "host": $("#select-host").val(),
+                "Name": $("#Name").val(),
+                "ImageName": $("#Image_Name").val(),
+                "PublishAllPorts": PublishAllPorts,
+                "HostPort" : [],
+                "ContainersPort" :[],
+                "TcpUdp":[]
+            };
+            for(var i=0;i<txtId;i++){
+                data["HostPort"].push($("#host-port"+(i+1)).val());
+                data["ContainersPort"].push($("#containers-port"+(i+1)).val());
+                data["TcpUdp"].push($('input[name="tcpudp'+(i+1)+'"]:checked').val());
+            }
+            $.ajax({
+                url : '/ImageCreate/',
+                method :"POST",
+                data : {
+                    Host:$("#select-host").val(),
+                    ImageName : $("#Image_Name").val()
+                },
+                dataType : 'json',
+                statusCode : {
+                    200: function () {
+                        $.ajax({
+                            url: '/Create/',
+                            method: "POST",
+                            traditional: true,
+                            data: data,
+                            dataType: 'json',
+                            statusCode: {
+                                200: function (data) {
+                                    $("#success").alert;
+                                    $("#success").fadeTo(5000, 500).slideUp(500, function () {
+                                        $("#success").slideUp(500);
+                                    });
+                                    $.ajax({
+                                        async: false,
+                                        type: 'POST',
+                                        url: $("#select-host").val()+":2375/containers/"+data.Id+"/start",
+                                        success:function () {
+                                            window.location.href = "/Containers/";
+                                        },
+                                        error : function () {
+                                            window.location.href = "/Containers/";
+                                        }
+                                    });
+                                },
+                                404: function () {
+                                    $("#error-404alert").alert;
+                                    $("#error-404alert").fadeTo(5000, 500).slideUp(500, function () {
+                                        $("#error-404alert").slideUp(500);
+                                    });
+                                },
+                                400: function () {
+                                    $("#error-500alert").alert;
+                                    $("#error-500alert").fadeTo(5000, 500).slideUp(500, function () {
+                                        $("#error-500alert").slideUp(500);
+                                    });
+                                },
+                                409: function () {
+                                    $("#error-500alert").alert;
+                                    $("#error-500alert").fadeTo(5000, 500).slideUp(500, function () {
+                                        $("#error-500alert").slideUp(500);
+                                    });
+                                },
+                                500: function () {
+                                    $("#error-500alert").alert;
+                                    $("#error-500alert").fadeTo(5000, 500).slideUp(500, function () {
+                                        $("#error-500alert").slideUp(500);
+                                    });
+                                }
+                            },
+                            404: function () {
+                                    $("#error-404alert").alert;
+                                    $("#error-404alert").fadeTo(5000, 500).slideUp(500, function () {
+                                        $("#error-404alert").slideUp(500);
+                                    });
+                                },
+                            500: function () {
+                                $("#error-500alert").alert;
+                                $("#error-500alert").fadeTo(5000, 500).slideUp(500, function () {
+                                    $("#error-500alert").slideUp(500);
+                                });
+                            }
+                        });
+                    }
+                }
+            });
+        });
+    </script>
+{% endblock %}
